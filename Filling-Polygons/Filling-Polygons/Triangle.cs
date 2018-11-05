@@ -10,17 +10,18 @@ namespace Filling_Polygons
 {
     class Triangle
     {
-        List<Point> vertices;
-        
+        public List<Vertex> vertices;
 
-        int vertexSize = 10; 
-        public Triangle(Point v1 , Point v2, Point v3) => vertices = new List<Point>() { v1, v2, v3 };
+
+        int vertexSize = 10;
+        public int leeway = 10; 
+        public Triangle(Vertex v1 , Vertex v2, Vertex v3) => vertices = new List<Vertex>() { v1, v2, v3 };
 
         public void Paint(PaintEventArgs e)
         {
             for(int i=0; i< vertices.Count; i++)
             {
-                e.Graphics.DrawLine(Pens.Black, vertices[i], vertices[(i + 1) % vertices.Count]);
+                e.Graphics.DrawLine(Pens.Black, vertices[i].ToPoint(), vertices[(i + 1) % vertices.Count].ToPoint());
                 Rectangle rect = new Rectangle(vertices[i].X - vertexSize / 2, vertices[i].Y - vertexSize / 2, vertexSize, vertexSize);
                 e.Graphics.DrawEllipse(Pens.Black, rect);
                 e.Graphics.FillEllipse(Brushes.Black, rect);
