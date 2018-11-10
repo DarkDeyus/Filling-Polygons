@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -15,89 +16,48 @@ namespace Filling_Polygons
     {
         #region Variables
 
-        List<Triangle> triangles;
+        List<Polygon> polygons;
         Color lightSourceColor = Color.White;
-        Color objectColor = Color.White;
-        Bitmap vectorTexture = Resources.normalmap;
-        Bitmap distortionTexture = Resources.heightmap;
-        Bitmap objectTexture = Resources.heightmap;
+        Bitmap vectorTexture;
+        Bitmap distortionTexture;
+
+        Vector3[,] savedDistortion;
+        Vector3[,] savedVectors;
+        IVector distortion;
+        IVector vector;
+
         Vertex selectedVertex;
-        Triangle selectedTriangle;
+        Polygon selectedPolygon;
         bool moving;
-        bool movingTriangle;
+        bool movingPolygon;
         Point startingPosition;
 
         #endregion
 
-        bool VectorConstant() => radioButtonVectorConstant.Enabled;
-
-        bool VectorLightSourceConstant() => radioButtonVectorLightSourceConstant.Enabled;
-
-        bool DistortionNone() => radioButtonDistortionNone.Enabled;
-
-        bool ObjectColor() => radioButtonObjectColor.Enabled;
-      
-        Triangle FindTriangle(Point location)
-        {
-            double Sign(Vertex p1, Vertex p2, Vertex p3)
-            {
-                return (p1.X - p3.X) * (p2.Y - p3.Y) - (p2.X - p3.X) * (p1.Y - p3.Y);
-            }
-
-            bool PointInTriangle(Vertex pt, Triangle triangle)
-            {
-                double d1, d2, d3;
-                bool has_neg, has_pos;
-                Vertex v1 = triangle.vertices[0];
-                Vertex v2 = triangle.vertices[1];
-                Vertex v3 = triangle.vertices[2];
-
-                d1 = Sign(pt, v1, v2);
-                d2 = Sign(pt, v2, v3);
-                d3 = Sign(pt, v3, v1);
-
-                has_neg = (d1 < 0) || (d2 < 0) || (d3 < 0);
-                has_pos = (d1 > 0) || (d2 > 0) || (d3 > 0);
-
-                return !(has_neg && has_pos);
-            }
-
+        bool VectorConstant() => radioButtonVectorConstant.Checked;
+        bool VectorLightSourceConstant() => radioButtonVectorLightSourceConstant.Checked;
+        bool DistortionNone() => radioButtonDistortionNone.Checked;
+        bool FirstObjectColor() => radioButtonFirstObjectColor.Checked;
+        bool SecondObjectColor() => radioButtonSecondObjectColor.Checked;
+        //TODO: rewrite for any polygon
+        Polygon FindTriangle(Point location)
+        {                
             Vertex vertex = new Vertex(location.X, location.Y);
-            foreach (Triangle triangle in triangles)
-                if (PointInTriangle(vertex, triangle))
+            foreach (Polygon triangle in polygons)
+                if (triangle.PointInTriangle(vertex))
                     return triangle;
 
             return null;
         }
-
         Vertex FindVertex(Point location)
         {
-            foreach (Triangle triangle in triangles)
-                foreach (Vertex vertex in triangle.vertices)
-                    if (Math.Pow((vertex.X - location.X), 2) +
-                        Math.Pow((vertex.Y - location.Y), 2) <= Math.Pow(triangle.leeway, 2))
-                        return vertex;
-
+            foreach(Polygon polygon in polygons)
+            {
+                (bool found, Vertex vertex) = polygon.GetVertex(location);
+                if (found) return vertex;
+            }
             return null;
         }
-
-        public Form1()
-        {
-            InitializeComponent();
-            triangles = new List<Triangle>()
-            {
-                new Triangle(new Vertex(450, 100), new Vertex(100, 100), new Vertex(100, 400)),
-                new Triangle(new Vertex(600, 200), new Vertex(750, 100), new Vertex(750, 300))
-            };
-
-        }
-
-        private void pictureBox1_Paint(object sender, PaintEventArgs e)
-        {
-            foreach (Triangle triangle in triangles)
-                triangle.Paint(e);           
-        }      
-
         Bitmap OpenImage()
         {
             OpenFileDialog openImage = new OpenFileDialog();
@@ -105,21 +65,69 @@ namespace Filling_Polygons
             openImage.Title = "Please select an image file";
             if (openImage.ShowDialog() == DialogResult.OK)
             {
-                return new Bitmap(openImage.FileName);
+                return new Bitmap(new Bitmap(openImage.FileName), pictureBox1.Right - pictureBox1.Left, pictureBox1.Bottom - pictureBox1.Top);
             }
             else return null;
         }
-
-        private void pictureBoxObjectTexture_Click(object sender, EventArgs e)
+        void UpdateVector(Vector3[,] vectors) => vector = new VectorArray(vectors);
+        void UpdateDistortion(Vector3[,] vectors) => distortion = new VectorArray(vectors);
+        //ADD CHANGE OF LIGHT VECTOR
+        Vector3[,] VectorArrayFromBitmap(PixelMapSharp.PixelMap bitmap)
         {
-            Bitmap image = OpenImage();
-            if(image != null)
+            Vector3[,] vectors = new Vector3[bitmap.Width, bitmap.Height];
+            for (int x = 0; x < bitmap.Width; x++)
             {
-                objectTexture = image;
-                pictureBoxObjectTexture.Image = image;
-                pictureBox1.Refresh();
+                for (int y = 0; y < bitmap.Height; y++)
+                {
+                    vectors[x, y] = Vector.GetVector(bitmap[x, y]);
+                }
             }
+            return vectors;
         }
+
+        //TODO:FINISH
+        Vector3[,] VectorDistortionyFromBitmap(PixelMapSharp.PixelMap bitmap)
+        {
+            Vector3[,] vectors = new Vector3[bitmap.Width, bitmap.Height];
+            for (int x = 0; x < bitmap.Width; x++)
+            {
+                for (int y = 0; y < bitmap.Height; y++)
+                {
+                    Vector3 color = Vector.GetVector(bitmap[x, y]);
+
+                    Vector3 T = new Vector3(1, 0, color.X);
+                    Vector3 B = new Vector3(0, 1, color.Y);
+                    //Vector3 D = T * dhx + B*dhy;
+
+
+                    //dhx = H[x+1,y]-H[x,y] dhy = H[x,y+1]-H[x,y] (zmiany wysokości w HeightMap odpowiednio w kierunku x i y)
+                }
+            }
+            return vectors;
+        }
+        public Form1()
+        {
+            InitializeComponent();
+            vectorTexture = new Bitmap(Resources.normalmap, pictureBox1.Right - pictureBox1.Left, pictureBox1.Bottom - pictureBox1.Top);
+            distortionTexture = new Bitmap(Resources.heightmap, pictureBox1.Right - pictureBox1.Left, pictureBox1.Bottom - pictureBox1.Top);
+            Bitmap texture = new Bitmap(Resources.normalmap, pictureBox1.Right - pictureBox1.Left, pictureBox1.Bottom - pictureBox1.Top);
+            polygons = new List<Polygon>()
+            {
+                new Polygon(new List<Vertex>() {new Vertex(450, 101), new Vertex(100, 100), new Vertex(102, 400) } ),
+                new Polygon(new List<Vertex>() {new Vertex(600, 200), new Vertex(753, 100), new Vertex(754, 300) } ),
+            };
+
+            foreach (Polygon polygon in polygons)
+                polygon.UpdateTexture(texture);
+
+        }
+
+        private void pictureBox1_Paint(object sender, PaintEventArgs e)
+        {
+            foreach (Polygon polygon in polygons)
+                polygon.Paint(e);           
+        }           
+        
 
         private void buttonLightSourceColor_Click(object sender, EventArgs e)
         {
@@ -127,15 +135,6 @@ namespace Filling_Polygons
             {
                 lightSourceColor = colorDialog1.Color;
                 buttonLightSourceColor.BackColor = colorDialog1.Color;
-            }
-        }
-
-        private void buttonObjectColor_Click(object sender, EventArgs e)
-        {
-            if (colorDialog1.ShowDialog() == DialogResult.OK)
-            {
-                objectColor = colorDialog1.Color;
-                buttonObjectColor.BackColor = colorDialog1.Color;
             }
         }
 
@@ -159,7 +158,13 @@ namespace Filling_Polygons
                 pictureBoxDistortionTexture.Image = image;
                 pictureBox1.Refresh();
             }
-        }         
+        }
+        //TODO: should it be like this?
+
+        private void numericUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            pictureBox1.Refresh();
+        }
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
@@ -169,15 +174,15 @@ namespace Filling_Polygons
             {
                 case (MouseButtons.Left):
                     selectedVertex = FindVertex(e.Location);
-                    movingTriangle = false;
+                    movingPolygon = false;
                     break;
                 case (MouseButtons.Middle):
-                    selectedTriangle = FindTriangle(e.Location);
-                    movingTriangle = true;
+                    selectedPolygon = FindTriangle(e.Location);
+                    movingPolygon = true;
                     break;
             }
 
-            if ((selectedVertex != null || selectedTriangle != null) && e.Button != MouseButtons.Right)
+            if ((selectedVertex != null || selectedPolygon != null) && e.Button != MouseButtons.Right)
             {
                 moving = true;
                 startingPosition = pictureBox1.PointToClient(Cursor.Position);
@@ -192,13 +197,9 @@ namespace Filling_Polygons
             int difX = pictureBox1.PointToClient(Cursor.Position).X - startingPosition.X;
             int difY = pictureBox1.PointToClient(Cursor.Position).Y - startingPosition.Y;
          
-            if(movingTriangle)
+            if(movingPolygon)
             {
-                for (int i = 0; i < selectedTriangle.vertices.Count; i++)
-                {
-                    selectedTriangle.vertices[i].X += difX;
-                    selectedTriangle.vertices[i].Y += difY;
-                }
+                selectedPolygon.movePolygon(difX, difY);
             }
             //moving vertex
             else
@@ -215,14 +216,84 @@ namespace Filling_Polygons
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
         {          
             moving = false;
-            selectedTriangle = null;
+            selectedPolygon = null;
             selectedVertex = null;
+        }      
+
+        private void buttonFirstObjectColor_Click(object sender, EventArgs e)
+        {
+            if (colorDialog1.ShowDialog() == DialogResult.OK)
+            {
+                polygons[0].objectColor = colorDialog1.Color;
+                buttonFirstObjectColor.BackColor = colorDialog1.Color;
+                pictureBox1.Refresh();
+            }
         }
 
-        //TODO: should it be like this?
-        private void numericUpDown_ValueChanged(object sender, EventArgs e)
+        private void buttonSecondObjectColor_Click(object sender, EventArgs e)
         {
+            if (colorDialog1.ShowDialog() == DialogResult.OK)
+            {
+                polygons[1].objectColor = colorDialog1.Color;
+                buttonSecondObjectColor.BackColor = colorDialog1.Color;
+                pictureBox1.Refresh();
+            }
+        }
+
+        private void pictureBoxFirstObjectTexture_Click(object sender, EventArgs e)
+        {
+            Bitmap image = OpenImage();
+            if (image != null)
+            {
+                polygons[0].objectTexture = new PixelMapSharp.PixelMap(image);
+                pictureBoxFirstObjectTexture.Image = image;
+                pictureBox1.Refresh();
+            }
+        }
+
+        private void pictureBoxSecondObjectTexture_Click(object sender, EventArgs e)
+        {
+            Bitmap image = OpenImage();
+            if (image != null)
+            {
+                polygons[1].objectTexture = new PixelMapSharp.PixelMap(image);
+                pictureBoxSecondObjectTexture.Image = image;
+                pictureBox1.Refresh();
+            }
+        }
+        private void radioButtonSecondObject_CheckedChanged(object sender, EventArgs e)
+        {
+            polygons[0].color = SecondObjectColor();
             pictureBox1.Refresh();
         }
+        private void radioButtonFirstObject_CheckedChanged(object sender, EventArgs e)
+        {
+            polygons[1].color = FirstObjectColor();
+            pictureBox1.Refresh();
+        }
+        private void radioButtonVector_CheckedChanged(object sender, EventArgs e)
+        {
+            if(VectorConstant())
+            {
+                vector = new ConstantVector(new Vector3(0, 0, 1));
+            }
+            else
+            {
+                UpdateVector(savedVectors);
+            }
+        }
+        private void radioButtonDistortion_CheckedChanged(object sender, EventArgs e)
+        {
+            if (DistortionNone())
+            {
+                vector = new ConstantVector(new Vector3(0, 0, 0));
+            }
+            else
+            {
+                UpdateDistortion(savedDistortion);
+            }
+        }
+
+        
     }
 }

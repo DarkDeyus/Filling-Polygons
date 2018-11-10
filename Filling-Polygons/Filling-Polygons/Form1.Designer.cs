@@ -30,6 +30,11 @@
         {
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.pictureBoxSecondObjectTexture = new System.Windows.Forms.PictureBox();
+            this.buttonSecondObjectColor = new System.Windows.Forms.Button();
+            this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.radioButtonSecondObjectColor = new System.Windows.Forms.RadioButton();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.pictureBoxDistortionTexture = new System.Windows.Forms.PictureBox();
             this.radioButtonDistortionTexture = new System.Windows.Forms.RadioButton();
@@ -44,10 +49,10 @@
             this.radioButtonAnimatedLightSource = new System.Windows.Forms.RadioButton();
             this.radioButtonVectorLightSourceConstant = new System.Windows.Forms.RadioButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.pictureBoxObjectTexture = new System.Windows.Forms.PictureBox();
-            this.buttonObjectColor = new System.Windows.Forms.Button();
-            this.radioButtonObjectTexture = new System.Windows.Forms.RadioButton();
-            this.radioButtonObjectColor = new System.Windows.Forms.RadioButton();
+            this.pictureBoxFirstObjectTexture = new System.Windows.Forms.PictureBox();
+            this.buttonFirstObjectColor = new System.Windows.Forms.Button();
+            this.radioButtonFirstObjectTexture = new System.Windows.Forms.RadioButton();
+            this.radioButtonFirstObjectColor = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.buttonLightSourceColor = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -55,6 +60,8 @@
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.groupBox6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSecondObjectTexture)).BeginInit();
             this.groupBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDistortionTexture)).BeginInit();
             this.groupBox4.SuspendLayout();
@@ -62,7 +69,7 @@
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown)).BeginInit();
             this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxObjectTexture)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxFirstObjectTexture)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -76,6 +83,7 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.groupBox6);
             this.splitContainer1.Panel1.Controls.Add(this.groupBox5);
             this.splitContainer1.Panel1.Controls.Add(this.groupBox4);
             this.splitContainer1.Panel1.Controls.Add(this.groupBox3);
@@ -85,16 +93,75 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.pictureBox1);
-            this.splitContainer1.Size = new System.Drawing.Size(1184, 761);
-            this.splitContainer1.SplitterDistance = 229;
+            this.splitContainer1.Size = new System.Drawing.Size(1356, 945);
+            this.splitContainer1.SplitterDistance = 262;
             this.splitContainer1.TabIndex = 0;
+            // 
+            // groupBox6
+            // 
+            this.groupBox6.Controls.Add(this.pictureBoxSecondObjectTexture);
+            this.groupBox6.Controls.Add(this.buttonSecondObjectColor);
+            this.groupBox6.Controls.Add(this.radioButton1);
+            this.groupBox6.Controls.Add(this.radioButtonSecondObjectColor);
+            this.groupBox6.Location = new System.Drawing.Point(12, 269);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(200, 159);
+            this.groupBox6.TabIndex = 3;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "Color of the second object";
+            // 
+            // pictureBoxSecondObjectTexture
+            // 
+            this.pictureBoxSecondObjectTexture.Image = global::Filling_Polygons.Properties.Resources.heightmap;
+            this.pictureBoxSecondObjectTexture.InitialImage = null;
+            this.pictureBoxSecondObjectTexture.Location = new System.Drawing.Point(46, 83);
+            this.pictureBoxSecondObjectTexture.Name = "pictureBoxSecondObjectTexture";
+            this.pictureBoxSecondObjectTexture.Size = new System.Drawing.Size(98, 70);
+            this.pictureBoxSecondObjectTexture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxSecondObjectTexture.TabIndex = 2;
+            this.pictureBoxSecondObjectTexture.TabStop = false;
+            this.pictureBoxSecondObjectTexture.Click += new System.EventHandler(this.pictureBoxSecondObjectTexture_Click);
+            // 
+            // buttonSecondObjectColor
+            // 
+            this.buttonSecondObjectColor.BackColor = System.Drawing.Color.Green;
+            this.buttonSecondObjectColor.Location = new System.Drawing.Point(105, 19);
+            this.buttonSecondObjectColor.Name = "buttonSecondObjectColor";
+            this.buttonSecondObjectColor.Size = new System.Drawing.Size(73, 36);
+            this.buttonSecondObjectColor.TabIndex = 1;
+            this.buttonSecondObjectColor.UseVisualStyleBackColor = false;
+            this.buttonSecondObjectColor.Click += new System.EventHandler(this.buttonSecondObjectColor_Click);
+            // 
+            // radioButton1
+            // 
+            this.radioButton1.AutoSize = true;
+            this.radioButton1.Location = new System.Drawing.Point(7, 60);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(61, 17);
+            this.radioButton1.TabIndex = 1;
+            this.radioButton1.Text = "Texture";
+            this.radioButton1.UseVisualStyleBackColor = true;
+            this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButtonSecondObject_CheckedChanged);
+            // 
+            // radioButtonSecondObjectColor
+            // 
+            this.radioButtonSecondObjectColor.AutoSize = true;
+            this.radioButtonSecondObjectColor.Checked = true;
+            this.radioButtonSecondObjectColor.Location = new System.Drawing.Point(7, 29);
+            this.radioButtonSecondObjectColor.Name = "radioButtonSecondObjectColor";
+            this.radioButtonSecondObjectColor.Size = new System.Drawing.Size(49, 17);
+            this.radioButtonSecondObjectColor.TabIndex = 0;
+            this.radioButtonSecondObjectColor.TabStop = true;
+            this.radioButtonSecondObjectColor.Text = "Color";
+            this.radioButtonSecondObjectColor.UseVisualStyleBackColor = true;
+            this.radioButtonSecondObjectColor.CheckedChanged += new System.EventHandler(this.radioButtonSecondObject_CheckedChanged);
             // 
             // groupBox5
             // 
             this.groupBox5.Controls.Add(this.pictureBoxDistortionTexture);
             this.groupBox5.Controls.Add(this.radioButtonDistortionTexture);
             this.groupBox5.Controls.Add(this.radioButtonDistortionNone);
-            this.groupBox5.Location = new System.Drawing.Point(13, 571);
+            this.groupBox5.Location = new System.Drawing.Point(13, 736);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(200, 178);
             this.groupBox5.TabIndex = 3;
@@ -105,9 +172,9 @@
             // 
             this.pictureBoxDistortionTexture.Image = global::Filling_Polygons.Properties.Resources.heightmap;
             this.pictureBoxDistortionTexture.InitialImage = null;
-            this.pictureBoxDistortionTexture.Location = new System.Drawing.Point(7, 84);
+            this.pictureBoxDistortionTexture.Location = new System.Drawing.Point(46, 84);
             this.pictureBoxDistortionTexture.Name = "pictureBoxDistortionTexture";
-            this.pictureBoxDistortionTexture.Size = new System.Drawing.Size(187, 84);
+            this.pictureBoxDistortionTexture.Size = new System.Drawing.Size(98, 84);
             this.pictureBoxDistortionTexture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBoxDistortionTexture.TabIndex = 5;
             this.pictureBoxDistortionTexture.TabStop = false;
@@ -122,6 +189,7 @@
             this.radioButtonDistortionTexture.TabIndex = 1;
             this.radioButtonDistortionTexture.Text = "Texture (HeightMap)";
             this.radioButtonDistortionTexture.UseVisualStyleBackColor = true;
+            this.radioButtonDistortionTexture.CheckedChanged += new System.EventHandler(this.radioButtonDistortion_CheckedChanged);
             // 
             // radioButtonDistortionNone
             // 
@@ -134,15 +202,16 @@
             this.radioButtonDistortionNone.TabStop = true;
             this.radioButtonDistortionNone.Text = "None [0,0,0]";
             this.radioButtonDistortionNone.UseVisualStyleBackColor = true;
+            this.radioButtonDistortionNone.CheckedChanged += new System.EventHandler(this.radioButtonDistortion_CheckedChanged);
             // 
             // groupBox4
             // 
             this.groupBox4.Controls.Add(this.pictureBoxVectorTexture);
             this.groupBox4.Controls.Add(this.radioButtonVectorTexture);
             this.groupBox4.Controls.Add(this.radioButtonVectorConstant);
-            this.groupBox4.Location = new System.Drawing.Point(13, 375);
+            this.groupBox4.Location = new System.Drawing.Point(13, 540);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(192, 190);
+            this.groupBox4.Size = new System.Drawing.Size(200, 190);
             this.groupBox4.TabIndex = 2;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Vector ";
@@ -151,9 +220,9 @@
             // 
             this.pictureBoxVectorTexture.Image = global::Filling_Polygons.Properties.Resources.normalmap;
             this.pictureBoxVectorTexture.InitialImage = null;
-            this.pictureBoxVectorTexture.Location = new System.Drawing.Point(6, 89);
+            this.pictureBoxVectorTexture.Location = new System.Drawing.Point(46, 89);
             this.pictureBoxVectorTexture.Name = "pictureBoxVectorTexture";
-            this.pictureBoxVectorTexture.Size = new System.Drawing.Size(180, 95);
+            this.pictureBoxVectorTexture.Size = new System.Drawing.Size(98, 95);
             this.pictureBoxVectorTexture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBoxVectorTexture.TabIndex = 3;
             this.pictureBoxVectorTexture.TabStop = false;
@@ -168,6 +237,7 @@
             this.radioButtonVectorTexture.TabIndex = 4;
             this.radioButtonVectorTexture.Text = "Texture (NormalMap)";
             this.radioButtonVectorTexture.UseVisualStyleBackColor = true;
+            this.radioButtonVectorTexture.CheckedChanged += new System.EventHandler(this.radioButtonVector_CheckedChanged);
             // 
             // radioButtonVectorConstant
             // 
@@ -180,6 +250,7 @@
             this.radioButtonVectorConstant.TabStop = true;
             this.radioButtonVectorConstant.Text = "Constant [0,0,1]";
             this.radioButtonVectorConstant.UseVisualStyleBackColor = true;
+            this.radioButtonVectorConstant.CheckedChanged += new System.EventHandler(this.radioButtonVector_CheckedChanged);
             // 
             // groupBox3
             // 
@@ -187,7 +258,7 @@
             this.groupBox3.Controls.Add(this.label1);
             this.groupBox3.Controls.Add(this.radioButtonAnimatedLightSource);
             this.groupBox3.Controls.Add(this.radioButtonVectorLightSourceConstant);
-            this.groupBox3.Location = new System.Drawing.Point(13, 269);
+            this.groupBox3.Location = new System.Drawing.Point(13, 434);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(200, 100);
             this.groupBox3.TabIndex = 2;
@@ -240,60 +311,62 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.pictureBoxObjectTexture);
-            this.groupBox2.Controls.Add(this.buttonObjectColor);
-            this.groupBox2.Controls.Add(this.radioButtonObjectTexture);
-            this.groupBox2.Controls.Add(this.radioButtonObjectColor);
+            this.groupBox2.Controls.Add(this.pictureBoxFirstObjectTexture);
+            this.groupBox2.Controls.Add(this.buttonFirstObjectColor);
+            this.groupBox2.Controls.Add(this.radioButtonFirstObjectTexture);
+            this.groupBox2.Controls.Add(this.radioButtonFirstObjectColor);
             this.groupBox2.Location = new System.Drawing.Point(13, 104);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(200, 159);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Color of the objects";
+            this.groupBox2.Text = "Color of the first object ";
             // 
-            // pictureBoxObjectTexture
+            // pictureBoxFirstObjectTexture
             // 
-            this.pictureBoxObjectTexture.Image = global::Filling_Polygons.Properties.Resources.heightmap;
-            this.pictureBoxObjectTexture.InitialImage = null;
-            this.pictureBoxObjectTexture.Location = new System.Drawing.Point(7, 89);
-            this.pictureBoxObjectTexture.Name = "pictureBoxObjectTexture";
-            this.pictureBoxObjectTexture.Size = new System.Drawing.Size(185, 64);
-            this.pictureBoxObjectTexture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBoxObjectTexture.TabIndex = 2;
-            this.pictureBoxObjectTexture.TabStop = false;
-            this.pictureBoxObjectTexture.Click += new System.EventHandler(this.pictureBoxObjectTexture_Click);
+            this.pictureBoxFirstObjectTexture.Image = global::Filling_Polygons.Properties.Resources.heightmap;
+            this.pictureBoxFirstObjectTexture.InitialImage = null;
+            this.pictureBoxFirstObjectTexture.Location = new System.Drawing.Point(46, 83);
+            this.pictureBoxFirstObjectTexture.Name = "pictureBoxFirstObjectTexture";
+            this.pictureBoxFirstObjectTexture.Size = new System.Drawing.Size(98, 70);
+            this.pictureBoxFirstObjectTexture.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxFirstObjectTexture.TabIndex = 2;
+            this.pictureBoxFirstObjectTexture.TabStop = false;
+            this.pictureBoxFirstObjectTexture.Click += new System.EventHandler(this.pictureBoxFirstObjectTexture_Click);
             // 
-            // buttonObjectColor
+            // buttonFirstObjectColor
             // 
-            this.buttonObjectColor.BackColor = System.Drawing.Color.White;
-            this.buttonObjectColor.Location = new System.Drawing.Point(98, 19);
-            this.buttonObjectColor.Name = "buttonObjectColor";
-            this.buttonObjectColor.Size = new System.Drawing.Size(73, 36);
-            this.buttonObjectColor.TabIndex = 1;
-            this.buttonObjectColor.UseVisualStyleBackColor = false;
-            this.buttonObjectColor.Click += new System.EventHandler(this.buttonObjectColor_Click);
+            this.buttonFirstObjectColor.BackColor = System.Drawing.Color.Green;
+            this.buttonFirstObjectColor.Location = new System.Drawing.Point(105, 19);
+            this.buttonFirstObjectColor.Name = "buttonFirstObjectColor";
+            this.buttonFirstObjectColor.Size = new System.Drawing.Size(73, 36);
+            this.buttonFirstObjectColor.TabIndex = 1;
+            this.buttonFirstObjectColor.UseVisualStyleBackColor = false;
+            this.buttonFirstObjectColor.Click += new System.EventHandler(this.buttonFirstObjectColor_Click);
             // 
-            // radioButtonObjectTexture
+            // radioButtonFirstObjectTexture
             // 
-            this.radioButtonObjectTexture.AutoSize = true;
-            this.radioButtonObjectTexture.Location = new System.Drawing.Point(7, 66);
-            this.radioButtonObjectTexture.Name = "radioButtonObjectTexture";
-            this.radioButtonObjectTexture.Size = new System.Drawing.Size(61, 17);
-            this.radioButtonObjectTexture.TabIndex = 1;
-            this.radioButtonObjectTexture.Text = "Texture";
-            this.radioButtonObjectTexture.UseVisualStyleBackColor = true;
+            this.radioButtonFirstObjectTexture.AutoSize = true;
+            this.radioButtonFirstObjectTexture.Location = new System.Drawing.Point(7, 60);
+            this.radioButtonFirstObjectTexture.Name = "radioButtonFirstObjectTexture";
+            this.radioButtonFirstObjectTexture.Size = new System.Drawing.Size(61, 17);
+            this.radioButtonFirstObjectTexture.TabIndex = 1;
+            this.radioButtonFirstObjectTexture.Text = "Texture";
+            this.radioButtonFirstObjectTexture.UseVisualStyleBackColor = true;
+            this.radioButtonFirstObjectTexture.CheckedChanged += new System.EventHandler(this.radioButtonFirstObject_CheckedChanged);
             // 
-            // radioButtonObjectColor
+            // radioButtonFirstObjectColor
             // 
-            this.radioButtonObjectColor.AutoSize = true;
-            this.radioButtonObjectColor.Checked = true;
-            this.radioButtonObjectColor.Location = new System.Drawing.Point(7, 29);
-            this.radioButtonObjectColor.Name = "radioButtonObjectColor";
-            this.radioButtonObjectColor.Size = new System.Drawing.Size(49, 17);
-            this.radioButtonObjectColor.TabIndex = 0;
-            this.radioButtonObjectColor.TabStop = true;
-            this.radioButtonObjectColor.Text = "Color";
-            this.radioButtonObjectColor.UseVisualStyleBackColor = true;
+            this.radioButtonFirstObjectColor.AutoSize = true;
+            this.radioButtonFirstObjectColor.Checked = true;
+            this.radioButtonFirstObjectColor.Location = new System.Drawing.Point(7, 29);
+            this.radioButtonFirstObjectColor.Name = "radioButtonFirstObjectColor";
+            this.radioButtonFirstObjectColor.Size = new System.Drawing.Size(49, 17);
+            this.radioButtonFirstObjectColor.TabIndex = 0;
+            this.radioButtonFirstObjectColor.TabStop = true;
+            this.radioButtonFirstObjectColor.Text = "Color";
+            this.radioButtonFirstObjectColor.UseVisualStyleBackColor = true;
+            this.radioButtonFirstObjectColor.CheckedChanged += new System.EventHandler(this.radioButtonFirstObject_CheckedChanged);
             // 
             // groupBox1
             // 
@@ -321,7 +394,7 @@
             this.pictureBox1.BackColor = System.Drawing.Color.White;
             this.pictureBox1.Location = new System.Drawing.Point(4, 4);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(947, 757);
+            this.pictureBox1.Size = new System.Drawing.Size(1083, 929);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox1_Paint);
@@ -333,7 +406,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1184, 761);
+            this.ClientSize = new System.Drawing.Size(1356, 945);
             this.Controls.Add(this.splitContainer1);
             this.Name = "Form1";
             this.Text = "Form1";
@@ -341,6 +414,9 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.groupBox6.ResumeLayout(false);
+            this.groupBox6.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSecondObjectTexture)).EndInit();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDistortionTexture)).EndInit();
@@ -352,7 +428,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxObjectTexture)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxFirstObjectTexture)).EndInit();
             this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
@@ -368,10 +444,10 @@
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.RadioButton radioButtonObjectTexture;
-        private System.Windows.Forms.RadioButton radioButtonObjectColor;
-        private System.Windows.Forms.Button buttonObjectColor;
-        private System.Windows.Forms.PictureBox pictureBoxObjectTexture;
+        private System.Windows.Forms.RadioButton radioButtonFirstObjectTexture;
+        private System.Windows.Forms.RadioButton radioButtonFirstObjectColor;
+        private System.Windows.Forms.Button buttonFirstObjectColor;
+        private System.Windows.Forms.PictureBox pictureBoxFirstObjectTexture;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.RadioButton radioButtonDistortionTexture;
         private System.Windows.Forms.RadioButton radioButtonDistortionNone;
@@ -383,6 +459,11 @@
         private System.Windows.Forms.RadioButton radioButtonAnimatedLightSource;
         private System.Windows.Forms.RadioButton radioButtonVectorLightSourceConstant;
         private System.Windows.Forms.PictureBox pictureBoxDistortionTexture;
+        private System.Windows.Forms.GroupBox groupBox6;
+        private System.Windows.Forms.PictureBox pictureBoxSecondObjectTexture;
+        private System.Windows.Forms.Button buttonSecondObjectColor;
+        private System.Windows.Forms.RadioButton radioButton1;
+        private System.Windows.Forms.RadioButton radioButtonSecondObjectColor;
     }
 }
 
