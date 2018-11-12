@@ -23,18 +23,19 @@ namespace Filling_Polygons
             return vectors;
         }
 
-        static public Vector3[,] VectorDistortionFromBitmap(PixelMapSharp.PixelMap bitmap)
+        static public Vector3[,] VectorDistortionFromBitmap(PixelMapSharp.PixelMap bitmap, IVector vector)
         {
             Vector3[,] vectors = new Vector3[bitmap.Width, bitmap.Height];
             for (int x = 0; x < bitmap.Width; x++)
             {
                 for (int y = 0; y < bitmap.Height; y++)
                 {
-                    Vector3 color = GetVector(bitmap[x, y]);
-
-                    double dhx = bitmap[(x + 1) % bitmap.Width, y].AValue - bitmap[x, y].AValue;
-                    double dhy = bitmap[x, (y + 1) % bitmap.Height].AValue - bitmap[x, y].AValue;
-                    vectors[x, y] = new Vector3((float)dhx, (float)dhy, (float)(color.X * dhx + color.Y * dhy));
+                    //int color = VectorToGreyscale(bitmap[x, y]);
+                    Vector3 T = new Vector3(1, 0, -vector.GetVector(x,y).X);
+                    Vector3 B = new Vector3(0, 1, -vector.GetVector(x,y).Y);
+                    int dhx = VectorToGreyscale(bitmap[(x + 1) % bitmap.Width, y]) - VectorToGreyscale(bitmap[x, y]);
+                    int dhy = VectorToGreyscale(bitmap[x, (y + 1) % bitmap.Height]) - VectorToGreyscale(bitmap[x, y]);
+                    vectors[x, y] = T * dhx /64 + B* dhy /64;
                 }
             }
             return vectors;
@@ -42,6 +43,10 @@ namespace Filling_Polygons
         static public float Cos(Vector3 v1, Vector3 v2)
         {
             return v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z;
+        }
+        static int VectorToGreyscale(PixelMapSharp.Pixel pixel)
+        {
+            return (int)Math.Round(0.21 * pixel.R + 0.72 * pixel.G + 0.07 * pixel.B);
         }
         static Vector3 VectorFromRGB(int R, int G, int B)
         {

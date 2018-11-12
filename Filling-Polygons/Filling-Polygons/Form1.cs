@@ -90,8 +90,9 @@ namespace Filling_Polygons
             vectorTexture = new Bitmap(Resources.normalmap, pictureBox1.Right - pictureBox1.Left, pictureBox1.Bottom - pictureBox1.Top);
             distortionTexture = new Bitmap(Resources.heightmap, pictureBox1.Right - pictureBox1.Left, pictureBox1.Bottom - pictureBox1.Top);
             savedVectors = Helpers.VectorArrayFromBitmap(new PixelMapSharp.PixelMap(vectorTexture));
-            savedDistortion = Helpers.VectorDistortionFromBitmap(new PixelMapSharp.PixelMap(distortionTexture));
             vector = new ConstantVector(new Vector3(0, 0, 1));
+            savedDistortion = Helpers.VectorDistortionFromBitmap(new PixelMapSharp.PixelMap(distortionTexture), vector);
+            
             distortion = new VectorArray(savedDistortion);
             Bitmap texture = new Bitmap(Resources.heightmap, pictureBox1.Right - pictureBox1.Left, pictureBox1.Bottom - pictureBox1.Top);
             polygons = new List<Polygon>()
@@ -134,6 +135,8 @@ namespace Filling_Polygons
                 vectorTexture = image;
                 savedVectors = Helpers.VectorArrayFromBitmap(new PixelMapSharp.PixelMap(vectorTexture));
                 if (!VectorConstant()) UpdateVector(savedVectors);
+                savedDistortion = Helpers.VectorDistortionFromBitmap(new PixelMapSharp.PixelMap(distortionTexture), vector);
+                if (!DistortionNone()) UpdateDistortion(savedDistortion);
                 pictureBoxVectorTexture.Image = image;
                 UpdatePolygons();
                 pictureBox1.Refresh();
@@ -146,7 +149,7 @@ namespace Filling_Polygons
             if (image != null)
             {
                 distortionTexture = image;
-                savedDistortion = Helpers.VectorDistortionFromBitmap(new PixelMapSharp.PixelMap(distortionTexture));
+                savedDistortion = Helpers.VectorDistortionFromBitmap(new PixelMapSharp.PixelMap(distortionTexture), vector);
                 if (!DistortionNone()) UpdateDistortion(savedDistortion);
                 pictureBoxDistortionTexture.Image = image;
                 UpdatePolygons();
@@ -280,6 +283,8 @@ namespace Filling_Polygons
             {
                 UpdateVector(savedVectors);
             }
+            savedDistortion = Helpers.VectorDistortionFromBitmap(new PixelMapSharp.PixelMap(distortionTexture), vector);
+            if (!DistortionNone()) UpdateDistortion(savedDistortion);
             UpdatePolygons();
             pictureBox1.Refresh();
         }
