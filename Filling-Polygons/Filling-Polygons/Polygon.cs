@@ -15,8 +15,12 @@ namespace Filling_Polygons
         List<Vertex> vertices;
         readonly int vertexSize = 10;
         readonly int leeway = 10;
-        public Color objectColor = Color.Green;       
-        public PixelMap objectTexture = new PixelMap(Resources.normalmap);
+        public Color Color = Color.Green;
+        public PixelMap Texture = new PixelMap(Resources.normalmap);
+        IVector texture;
+        IVector objectFilling;
+        Color[,] paint;
+
         public bool color = true;
         public Polygon(List<Vertex> list) => vertices = list;                   
         public int VerticesCount() => vertices.Count;
@@ -32,8 +36,35 @@ namespace Filling_Polygons
             }
             
         }
-        public void UpdateColor(Color color) => objectColor = color;
-        public void UpdateTexture(Bitmap texture) => objectTexture =  new PixelMap(texture);
+        //still no light vector 
+        public void Calculate(Color lightColor, IVector vector, IVector distortion, IVector lightVector, int width, int height )
+        {
+            objectFilling = color ? new ConstantVector(Helpers.GetVector(Color)) : texture; 
+            Vector3 colorVector = Helpers.GetVector(lightColor);
+            
+            Color[,] map = new Color[width, height];
+            for(int y = 0; y< height; y++)
+            {
+                for(int x = 0; x < width; x++)
+                {
+                    Vector3 N = Helpers.ToUnitVector((Helpers.NormalizeVector(vector.GetVector(x, y)) + distortion.GetVector(x, y)));
+                    Vector3 v = colorVector * objectFilling.GetVector(x, y);
+                    float cos = Helpers.Cos(N, lightVector.GetVector(x, y));
+                    map[x,y] = Helpers.GetColorFromVector( new Vector3(v.X * cos, v.Y * cos, v.Z * cos));
+                }
+            }
+            paint = map;
+        }
+
+        public void UpdateColor(Color color)
+        {
+            Color = color;         
+        }
+        public void UpdateTexture(Bitmap texture)
+        {
+           Texture = new PixelMap(texture);
+            this.texture = new VectorArray(Helpers.VectorArrayFromBitmap(Texture));
+        }
         public (bool, Vertex) GetVertex(Point location)
         {
             foreach (Vertex vertex in vertices)
@@ -73,12 +104,12 @@ namespace Filling_Polygons
         }
 
         Color GetColor(int X, int Y)
-        {
-            return color ? objectColor : objectTexture[X, Y].Color;
+        {           
+            return paint[X, Y];
         }
         void Scanline(PaintEventArgs e)
         {
-            Pen pen = new Pen(objectColor);
+            Pen pen = new Pen(Color);
             int[] indexes = Enumerable.Range(0, vertices.Count).OrderBy(i => vertices[i].Y).ToArray();
             int ymin = vertices[indexes[0]].Y;
             int ymax = vertices[indexes[vertices.Count - 1]].Y;

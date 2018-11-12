@@ -141,7 +141,6 @@
             this.radioButton1.TabIndex = 1;
             this.radioButton1.Text = "Texture";
             this.radioButton1.UseVisualStyleBackColor = true;
-            this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButtonSecondObject_CheckedChanged);
             // 
             // radioButtonSecondObjectColor
             // 
@@ -183,23 +182,22 @@
             // radioButtonDistortionTexture
             // 
             this.radioButtonDistortionTexture.AutoSize = true;
+            this.radioButtonDistortionTexture.Checked = true;
             this.radioButtonDistortionTexture.Location = new System.Drawing.Point(6, 61);
             this.radioButtonDistortionTexture.Name = "radioButtonDistortionTexture";
             this.radioButtonDistortionTexture.Size = new System.Drawing.Size(122, 17);
             this.radioButtonDistortionTexture.TabIndex = 1;
+            this.radioButtonDistortionTexture.TabStop = true;
             this.radioButtonDistortionTexture.Text = "Texture (HeightMap)";
             this.radioButtonDistortionTexture.UseVisualStyleBackColor = true;
-            this.radioButtonDistortionTexture.CheckedChanged += new System.EventHandler(this.radioButtonDistortion_CheckedChanged);
             // 
             // radioButtonDistortionNone
             // 
             this.radioButtonDistortionNone.AutoSize = true;
-            this.radioButtonDistortionNone.Checked = true;
             this.radioButtonDistortionNone.Location = new System.Drawing.Point(7, 28);
             this.radioButtonDistortionNone.Name = "radioButtonDistortionNone";
             this.radioButtonDistortionNone.Size = new System.Drawing.Size(84, 17);
             this.radioButtonDistortionNone.TabIndex = 0;
-            this.radioButtonDistortionNone.TabStop = true;
             this.radioButtonDistortionNone.Text = "None [0,0,0]";
             this.radioButtonDistortionNone.UseVisualStyleBackColor = true;
             this.radioButtonDistortionNone.CheckedChanged += new System.EventHandler(this.radioButtonDistortion_CheckedChanged);
@@ -237,7 +235,6 @@
             this.radioButtonVectorTexture.TabIndex = 4;
             this.radioButtonVectorTexture.Text = "Texture (NormalMap)";
             this.radioButtonVectorTexture.UseVisualStyleBackColor = true;
-            this.radioButtonVectorTexture.CheckedChanged += new System.EventHandler(this.radioButtonVector_CheckedChanged);
             // 
             // radioButtonVectorConstant
             // 
@@ -353,7 +350,6 @@
             this.radioButtonFirstObjectTexture.TabIndex = 1;
             this.radioButtonFirstObjectTexture.Text = "Texture";
             this.radioButtonFirstObjectTexture.UseVisualStyleBackColor = true;
-            this.radioButtonFirstObjectTexture.CheckedChanged += new System.EventHandler(this.radioButtonFirstObject_CheckedChanged);
             // 
             // radioButtonFirstObjectColor
             // 

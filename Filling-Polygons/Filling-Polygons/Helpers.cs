@@ -8,8 +8,41 @@ using System.Threading.Tasks;
 
 namespace Filling_Polygons
 {
-    static class Vector
+    static class Helpers
     {
+        static public Vector3[,] VectorArrayFromBitmap(PixelMapSharp.PixelMap bitmap)
+        {
+            Vector3[,] vectors = new Vector3[bitmap.Width, bitmap.Height];
+            for (int x = 0; x < bitmap.Width; x++)
+            {
+                for (int y = 0; y < bitmap.Height; y++)
+                {
+                    vectors[x, y] = GetVector(bitmap[x, y]);
+                }
+            }
+            return vectors;
+        }
+
+        static public Vector3[,] VectorDistortionFromBitmap(PixelMapSharp.PixelMap bitmap)
+        {
+            Vector3[,] vectors = new Vector3[bitmap.Width, bitmap.Height];
+            for (int x = 0; x < bitmap.Width; x++)
+            {
+                for (int y = 0; y < bitmap.Height; y++)
+                {
+                    Vector3 color = GetVector(bitmap[x, y]);
+
+                    double dhx = bitmap[(x + 1) % bitmap.Width, y].AValue - bitmap[x, y].AValue;
+                    double dhy = bitmap[x, (y + 1) % bitmap.Height].AValue - bitmap[x, y].AValue;
+                    vectors[x, y] = new Vector3((float)dhx, (float)dhy, (float)(color.X * dhx + color.Y * dhy));
+                }
+            }
+            return vectors;
+        }
+        static public float Cos(Vector3 v1, Vector3 v2)
+        {
+            return v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z;
+        }
         static Vector3 VectorFromRGB(int R, int G, int B)
         {
             // to <-1, 1>
