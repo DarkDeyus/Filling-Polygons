@@ -27,12 +27,13 @@ namespace Filling_Polygons
         IVector vector;
         //fix
         IVector light = new ConstantVector(new Vector3(0, 0, 1));
-
+        List<Reflector> reflectors;
         Vertex selectedVertex;
         Polygon selectedPolygon;
         bool moving;
         bool movingPolygon;
         Point startingPosition;
+        DirectBitmap bitmap;
 
         #endregion
 
@@ -41,6 +42,7 @@ namespace Filling_Polygons
         bool DistortionNone() => radioButtonDistortionNone.Checked;
         bool FirstObjectColor() => radioButtonFirstObjectColor.Checked;
         bool SecondObjectColor() => radioButtonSecondObjectColor.Checked;
+
         //TODO: rewrite for any polygon
         Polygon FindTriangle(Point location)
         {                
@@ -75,7 +77,7 @@ namespace Filling_Polygons
         void UpdateDistortion(Vector3[,] vectors) => distortion = new VectorArray(vectors);
         void UpdatePolygon(Polygon polygon)
         {
-            polygon.Calculate(lightSourceColor, vector, distortion, light, pictureBox1.Right - pictureBox1.Left, pictureBox1.Bottom - pictureBox1.Top);
+            polygon.Calculate(lightSourceColor, vector, distortion, light, reflectors, pictureBox1.Right - pictureBox1.Left, pictureBox1.Bottom - pictureBox1.Top);
         }
         void UpdatePolygons()
         {
@@ -87,35 +89,50 @@ namespace Filling_Polygons
         public Form1()
         {
             InitializeComponent();
-            vectorTexture = new Bitmap(Resources.normalmap, pictureBox1.Right - pictureBox1.Left, pictureBox1.Bottom - pictureBox1.Top);
-            distortionTexture = new Bitmap(Resources.heightmap, pictureBox1.Right - pictureBox1.Left, pictureBox1.Bottom - pictureBox1.Top);
-            savedVectors = Helpers.VectorArrayFromBitmap(new PixelMapSharp.PixelMap(vectorTexture));
+            int width = pictureBox1.Right - pictureBox1.Left;
+            int height = pictureBox1.Bottom - pictureBox1.Top;
+            vectorTexture = new Bitmap(Resources.normalmap, width, height);
+            distortionTexture = new Bitmap(Resources.heightmap, width, height);
+            savedVectors = Helpers.GetNormalVectorArray(new PixelMapSharp.PixelMap(vectorTexture));
             vector = new ConstantVector(new Vector3(0, 0, 1));
-            savedDistortion = Helpers.VectorDistortionFromBitmap(new PixelMapSharp.PixelMap(distortionTexture), vector);
+            savedDistortion = Helpers.GetDistortionVectorArray(new PixelMapSharp.PixelMap(distortionTexture), vector);
             
             distortion = new VectorArray(savedDistortion);
-            Bitmap texture = new Bitmap(Resources.heightmap, pictureBox1.Right - pictureBox1.Left, pictureBox1.Bottom - pictureBox1.Top);
+            Bitmap texture = new Bitmap(Resources.heightmap, width, height);
+            bitmap = new DirectBitmap(width, height);            
+            
             polygons = new List<Polygon>()
             {
                 new Polygon(new List<Vertex>() {new Vertex(450, 101), new Vertex(100, 100), new Vertex(102, 400) } ),
                 new Polygon(new List<Vertex>() {new Vertex(600, 200), new Vertex(753, 100), new Vertex(754, 300) } ),
             };
 
+            reflectors = new List<Reflector>()
+            {
+                new Reflector(width / 2, height / 2,  1, 1 , Color.Red),
+                new Reflector(width / 2, height / 2,  1000, 1 , Color.Green),
+                new Reflector(width / 2, height / 2,  540, 920 , Color.Blue)
+            };
+
             foreach (Polygon polygon in polygons)
             {
                 polygon.UpdateTexture(texture);
                 UpdatePolygon(polygon);
-            }               
+            }           
 
         }
 
         private void pictureBox1_Paint(object sender, PaintEventArgs e)
         {
+            bitmap.Reset(Color.White);
             foreach (Polygon polygon in polygons)
-                polygon.Paint(e);           
-        }           
-        
+                polygon.Paint(e, bitmap);
 
+            e.Graphics.DrawImage(bitmap.Bitmap, new Point(0, 0));
+            foreach (Polygon polygon in polygons)
+                polygon.PaintVertices(e);
+        }
+        
         private void buttonLightSourceColor_Click(object sender, EventArgs e)
         {
             if (colorDialog1.ShowDialog() == DialogResult.OK)
@@ -133,9 +150,9 @@ namespace Filling_Polygons
             if (image != null)
             {
                 vectorTexture = image;
-                savedVectors = Helpers.VectorArrayFromBitmap(new PixelMapSharp.PixelMap(vectorTexture));
+                savedVectors = Helpers.GetNormalVectorArray(new PixelMapSharp.PixelMap(vectorTexture));
                 if (!VectorConstant()) UpdateVector(savedVectors);
-                savedDistortion = Helpers.VectorDistortionFromBitmap(new PixelMapSharp.PixelMap(distortionTexture), vector);
+                savedDistortion = Helpers.GetDistortionVectorArray(new PixelMapSharp.PixelMap(distortionTexture), vector);
                 if (!DistortionNone()) UpdateDistortion(savedDistortion);
                 pictureBoxVectorTexture.Image = image;
                 UpdatePolygons();
@@ -148,8 +165,9 @@ namespace Filling_Polygons
             Bitmap image = OpenImage();
             if (image != null)
             {
+                               
                 distortionTexture = image;
-                savedDistortion = Helpers.VectorDistortionFromBitmap(new PixelMapSharp.PixelMap(distortionTexture), vector);
+                savedDistortion = Helpers.GetDistortionVectorArray(new PixelMapSharp.PixelMap(distortionTexture), vector);
                 if (!DistortionNone()) UpdateDistortion(savedDistortion);
                 pictureBoxDistortionTexture.Image = image;
                 UpdatePolygons();
@@ -200,8 +218,11 @@ namespace Filling_Polygons
             //moving vertex
             else
             {
+                
                 selectedVertex.X += difX;
-                selectedVertex.Y += difY;               
+                selectedVertex.Y += difY;
+                
+                            
             }
 
             startingPosition = new Point(e.X, e.Y);           
@@ -283,7 +304,7 @@ namespace Filling_Polygons
             {
                 UpdateVector(savedVectors);
             }
-            savedDistortion = Helpers.VectorDistortionFromBitmap(new PixelMapSharp.PixelMap(distortionTexture), vector);
+            savedDistortion = Helpers.GetDistortionVectorArray(new PixelMapSharp.PixelMap(distortionTexture), vector);
             if (!DistortionNone()) UpdateDistortion(savedDistortion);
             UpdatePolygons();
             pictureBox1.Refresh();
@@ -301,7 +322,16 @@ namespace Filling_Polygons
             UpdatePolygons();
             pictureBox1.Refresh();
         }
-
-        
+        private void radioButtonVectorLightSource_CheckedChanged(object sender, EventArgs e)
+        {
+            if (VectorLightSourceConstant())
+                light = new ConstantVector(new Vector3(0, 0, 1));
+            else
+            {
+                //
+            }
+            UpdatePolygons();
+            pictureBox1.Refresh();
+        }
     }
 }

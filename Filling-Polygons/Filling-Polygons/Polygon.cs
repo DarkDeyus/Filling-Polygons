@@ -20,37 +20,47 @@ namespace Filling_Polygons
         IVector texture;
         IVector objectFilling;
         Color[,] paint;
-
         public bool color = true;
         public Polygon(List<Vertex> list) => vertices = list;                   
         public int VerticesCount() => vertices.Count;
-        public void Paint(PaintEventArgs e)
-        {           
-            Scanline(e);
+        public void Paint(PaintEventArgs e, DirectBitmap bitmap)
+        {                      
+            Scanline(bitmap);                       
+        }
+
+        public void PaintVertices(PaintEventArgs e)
+        {
             for (int i = 0; i < vertices.Count; i++)
             {
                 e.Graphics.DrawLine(Pens.Black, vertices[i].ToPoint(), vertices[(i + 1) % vertices.Count].ToPoint());
                 Rectangle rect = new Rectangle(vertices[i].X - vertexSize / 2, vertices[i].Y - vertexSize / 2, vertexSize, vertexSize);
                 e.Graphics.DrawEllipse(Pens.Black, rect);
-                e.Graphics.FillEllipse(Brushes.Black, rect);               
+                e.Graphics.FillEllipse(Brushes.Black, rect);
             }
-            
         }
         //still no light vector 
-        public void Calculate(Color lightColor, IVector vector, IVector distortion, IVector lightVector, int width, int height )
+        public void Calculate(Color lightColor, IVector vector, IVector distortion, IVector lightVector, List<Reflector> reflectors, int width, int height )
         {
             objectFilling = color ? new ConstantVector(Helpers.GetVector(Color)) : texture; 
-            Vector3 colorVector = Helpers.GetVector(lightColor);
-            
+            Vector3 colorVector = Helpers.GetVector(lightColor);           
             Color[,] map = new Color[width, height];
-            for(int y = 0; y< height; y++)
+            for (int y = 0; y < height; y++)
             {
-                for(int x = 0; x < width; x++)
-                {
-                    Vector3 N = Helpers.ToUnitVector((Helpers.NormalizeVector(vector.GetVector(x, y)) + distortion.GetVector(x, y)));
+                for (int x = 0; x < width; x++)
+                {                   
+                    Vector3 N = Helpers.NormalizeVector((vector.GetVector(x, y) + distortion.GetVector(x, y)));
                     Vector3 v = colorVector * objectFilling.GetVector(x, y);
-                    float cos = Helpers.Cos(N, lightVector.GetVector(x, y));
-                    map[x,y] = Helpers.GetColorFromVector( new Vector3(v.X * cos, v.Y * cos, v.Z * cos));
+                    float cos = Math.Max(Vector3.Dot(N, lightVector.GetVector(x, y)), 0);
+                    Vector3 reflector = new Vector3(0, 0, 0);
+                    //Vector3 a;
+                    //double c;
+                    foreach (Reflector light in reflectors)
+                    {
+                        //a = light.GetReflectorColor(x, y);
+                        //c = Math.Max(Vector3.Dot(N, light.GetVectorToReflector(x, y)), 0);
+                        reflector += light.GetReflectorColor(x, y) * objectFilling.GetVector(x, y) * Math.Max(Vector3.Dot(N, light.GetVectorToReflector(x, y)), 0);
+                    }
+                    map[x,y] = Helpers.GetColorFromVector( new Vector3(v.X * cos, v.Y * cos, v.Z * cos) + reflector);
                 }
             }
             paint = map;
@@ -63,7 +73,7 @@ namespace Filling_Polygons
         public void UpdateTexture(Bitmap texture)
         {
            Texture = new PixelMap(texture);
-            this.texture = new VectorArray(Helpers.VectorArrayFromBitmap(Texture));
+           this.texture = new VectorArray(Helpers.GetNormalVectorArray(Texture));
         }
         public (bool, Vertex) GetVertex(Point location)
         {
@@ -75,7 +85,7 @@ namespace Filling_Polygons
             return (false, null);
         }
         public void movePolygon(int X, int Y)
-        {
+        {                       
             for (int i = 0; i < vertices.Count; i++)
             {
                 vertices[i].X += X;
@@ -104,10 +114,18 @@ namespace Filling_Polygons
         }
 
         Color GetColor(int X, int Y)
-        {           
+        {          
+            try
+            {
+                Color color = paint[X, Y];
+            }
+            catch 
+            {
+                return Color.White;
+            }
             return paint[X, Y];
         }
-        void Scanline(PaintEventArgs e)
+        void Scanline(DirectBitmap bitmap)
         {
             Pen pen = new Pen(Color);
             int[] indexes = Enumerable.Range(0, vertices.Count).OrderBy(i => vertices[i].Y).ToArray();
@@ -148,11 +166,10 @@ namespace Filling_Polygons
                 {                    
                     float x1 = bucket[i].x;
                     float x2 = bucket[i + 1].x;
-                    for( int x = (int)x1; x <= (int)x2; x++)
-                    {
-                        pen.Color = (GetColor(x, y - 1));
-                        e.Graphics.DrawRectangle(pen, x, y - 1, 1, 1);
-                    }
+                    Parallel.For((int)x1, (int)x2 + 1, x =>{
+                      if (x >= 0 && x < bitmap.Width && y > 0 && y<= bitmap.Height) bitmap.SetPixel(x, y - 1, GetColor(x, y - 1));
+                  });
+                   
                     bucket[i].x += bucket[i].inverseOfM;
                     bucket[i + 1].x += bucket[i + 1].inverseOfM;
                 }              

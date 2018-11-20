@@ -305,6 +305,7 @@
             this.radioButtonVectorLightSourceConstant.TabStop = true;
             this.radioButtonVectorLightSourceConstant.Text = "Constant [0,0,1]";
             this.radioButtonVectorLightSourceConstant.UseVisualStyleBackColor = true;
+            this.radioButtonVectorLightSourceConstant.CheckedChanged += new System.EventHandler(this.radioButtonVectorLightSource_CheckedChanged);
             // 
             // groupBox2
             // 
