@@ -38,7 +38,6 @@ namespace Filling_Polygons
                 e.Graphics.FillEllipse(Brushes.Black, rect);
             }
         }
-        //still no light vector 
         public void Calculate(Color lightColor, IVector vector, IVector distortion, IVector lightVector, List<Reflector> reflectors, int width, int height )
         {
             objectFilling = color ? new ConstantVector(Helpers.GetVector(Color)) : texture; 
@@ -52,12 +51,9 @@ namespace Filling_Polygons
                     Vector3 v = colorVector * objectFilling.GetVector(x, y);
                     float cos = Math.Max(Vector3.Dot(N, lightVector.GetVector(x, y)), 0);
                     Vector3 reflector = new Vector3(0, 0, 0);
-                    //Vector3 a;
-                    //double c;
+
                     foreach (Reflector light in reflectors)
                     {
-                        //a = light.GetReflectorColor(x, y);
-                        //c = Math.Max(Vector3.Dot(N, light.GetVectorToReflector(x, y)), 0);
                         reflector += light.GetReflectorColor(x, y) * objectFilling.GetVector(x, y) * Math.Max(Vector3.Dot(N, light.GetVectorToReflector(x, y)), 0);
                     }
                     map[x,y] = Helpers.GetColorFromVector( new Vector3(v.X * cos, v.Y * cos, v.Z * cos) + reflector);
@@ -92,7 +88,6 @@ namespace Filling_Polygons
                 vertices[i].Y += Y;
             }
         }
-        //TODO: remake it into point in polygon
         public bool PointInTriangle(Vertex pt)
         {
             double Sign(Vertex p1, Vertex p2, Vertex p3) => (p1.X - p3.X) * (p2.Y - p3.Y) - (p2.X - p3.X) * (p1.Y - p3.Y);   

@@ -21,19 +21,7 @@ namespace Filling_Polygons
                 }
             }
             return vectors;
-        }
-        static public Vector3[,] VectorArrayToLight(Point point, int width, int height)
-        {
-            Vector3[,] vectors = new Vector3[width, height];
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    vectors[x, y] = Vector3.Normalize(new Vector3(point.X - x, point.Y - y, 10));
-                }
-            }
-            return vectors;
-        }
+        }       
 
         static public Vector3[,] GetDistortionVectorArray(PixelMapSharp.PixelMap bitmap, IVector vector)
         {
@@ -74,6 +62,7 @@ namespace Filling_Polygons
             {
                 vector.X /= vector.Z;
                 vector.Y /= vector.Z;
+
                 //vector.Z / vector.Z = 1 
                 vector.Z = 1;
             }
@@ -91,28 +80,6 @@ namespace Filling_Polygons
             int B = Math.Max(Math.Min((int)(vector.Z * 255), 255), 0);
             return Color.FromArgb(R, G, B);
         }
-        //static public Color GetColorFromNVector(Vector3 vector)
-        //{
-        //    double R = (vector.X + 1) * 255 / 2;
-            
-        //    double G = (vector.Y + 1) * 255 / 2;
-            
-        //    double B = vector.Z * 255;
-
-        //    if (R < 0)
-        //        R = 0;
-        //    if (R > 255)
-        //        R = 255;
-        //    if (G < 0)
-        //        G = 0;
-        //    if (G > 255)
-        //        G = 255;
-        //    if (B < 0)
-        //        B = 0;
-        //    if (B > 255)
-        //        B = 255;
-           
-        //    return Color.FromArgb((int)R, (int)G, (int)B);
-        //}       
+        
     }
 }

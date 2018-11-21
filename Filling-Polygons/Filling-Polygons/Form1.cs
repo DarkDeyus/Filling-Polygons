@@ -25,8 +25,7 @@ namespace Filling_Polygons
         Vector3[,] savedVectors;
         IVector distortion;
         IVector vector;
-        //fix
-        IVector light = new ConstantVector(new Vector3(0, 0, 1));
+        public IVector light;
         List<Reflector> reflectors;
         Vertex selectedVertex;
         Polygon selectedPolygon;
@@ -34,7 +33,7 @@ namespace Filling_Polygons
         bool movingPolygon;
         Point startingPosition;
         DirectBitmap bitmap;
-
+        Timer timer;
         #endregion
 
         bool VectorConstant() => radioButtonVectorConstant.Checked;
@@ -43,9 +42,8 @@ namespace Filling_Polygons
         bool FirstObjectColor() => radioButtonFirstObjectColor.Checked;
         bool SecondObjectColor() => radioButtonSecondObjectColor.Checked;
 
-        //TODO: rewrite for any polygon
         Polygon FindTriangle(Point location)
-        {                
+        {
             Vertex vertex = new Vertex(location.X, location.Y);
             foreach (Polygon triangle in polygons)
                 if (triangle.PointInTriangle(vertex))
@@ -55,7 +53,7 @@ namespace Filling_Polygons
         }
         Vertex FindVertex(Point location)
         {
-            foreach(Polygon polygon in polygons)
+            foreach (Polygon polygon in polygons)
             {
                 (bool found, Vertex vertex) = polygon.GetVertex(location);
                 if (found) return vertex;
@@ -84,10 +82,17 @@ namespace Filling_Polygons
             foreach (var polygon in polygons)
                 UpdatePolygon(polygon);
         }
-        //ADD CHANGE OF LIGHT VECTOR
 
         public Form1()
         {
+            
+            void UpdateLight(object sender, EventArgs e)
+            {
+                light.Update();
+                UpdatePolygons();
+                pictureBox1.Refresh();
+            }
+
             InitializeComponent();
             int width = pictureBox1.Right - pictureBox1.Left;
             int height = pictureBox1.Bottom - pictureBox1.Top;
@@ -95,12 +100,19 @@ namespace Filling_Polygons
             distortionTexture = new Bitmap(Resources.heightmap, width, height);
             savedVectors = Helpers.GetNormalVectorArray(new PixelMapSharp.PixelMap(vectorTexture));
             vector = new ConstantVector(new Vector3(0, 0, 1));
-            savedDistortion = Helpers.GetDistortionVectorArray(new PixelMapSharp.PixelMap(distortionTexture), vector);
-            
+            savedDistortion = Helpers.GetDistortionVectorArray(new PixelMapSharp.PixelMap(distortionTexture), vector);           
             distortion = new VectorArray(savedDistortion);
             Bitmap texture = new Bitmap(Resources.heightmap, width, height);
-            bitmap = new DirectBitmap(width, height);            
+            bitmap = new DirectBitmap(width, height);
+            light = new ConstantVector(new Vector3(0, 0, 1));
+
+            timer = new Timer();
+            timer.Interval = 1000;
+            timer.Tick += UpdateLight;
+
             
+
+
             polygons = new List<Polygon>()
             {
                 new Polygon(new List<Vertex>() {new Vertex(450, 101), new Vertex(100, 100), new Vertex(102, 400) } ),
@@ -121,8 +133,9 @@ namespace Filling_Polygons
             }           
 
         }
+        
 
-        private void pictureBox1_Paint(object sender, PaintEventArgs e)
+            private void pictureBox1_Paint(object sender, PaintEventArgs e)
         {
             bitmap.Reset(Color.White);
             foreach (Polygon polygon in polygons)
@@ -174,10 +187,15 @@ namespace Filling_Polygons
                 pictureBox1.Refresh();
             }
         }
-        //TODO: should it be like this, just refresh?
         private void numericUpDown_ValueChanged(object sender, EventArgs e)
         {
-            pictureBox1.Refresh();
+            if (!VectorLightSourceConstant())
+            {
+                light = new MovingLight((pictureBox1.Right - pictureBox1.Left) / 2, (pictureBox1.Bottom - pictureBox1.Top) / 2, (int)numericUpDown.Value);
+                UpdatePolygons();
+                pictureBox1.Refresh();
+            }
+
         }
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
@@ -324,12 +342,18 @@ namespace Filling_Polygons
         }
         private void radioButtonVectorLightSource_CheckedChanged(object sender, EventArgs e)
         {
+            if (!VectorLightSourceConstant())
+                timer.Start();
+            else
+                timer.Stop();
+
             if (VectorLightSourceConstant())
                 light = new ConstantVector(new Vector3(0, 0, 1));
             else
             {
-                //
+                light = new MovingLight((pictureBox1.Right - pictureBox1.Left) / 2, (pictureBox1.Bottom - pictureBox1.Top) / 2, (int)numericUpDown.Value);                
             }
+            
             UpdatePolygons();
             pictureBox1.Refresh();
         }
