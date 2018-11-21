@@ -22,7 +22,6 @@ namespace Filling_Polygons
             }
             return vectors;
         }       
-
         static public Vector3[,] GetDistortionVectorArray(PixelMapSharp.PixelMap bitmap, IVector vector)
         {
             Vector3[,] vectors = new Vector3[bitmap.Width, bitmap.Height];
@@ -39,10 +38,8 @@ namespace Filling_Polygons
             }
             return vectors;
         }
-        public static Vector3 GetVector(Color c)
-        {
-            return new Vector3(c.R / 255f, c.G / 255f, c.B / 255f);
-        }
+        public static Vector3 GetVector(Color c) => new Vector3(c.R / 255f, c.G / 255f, c.B / 255f);
+
         static int VectorToGreyscale(PixelMapSharp.Pixel pixel) => (int)Math.Round(0.21 * pixel.R + 0.72 * pixel.G + 0.07 * pixel.B);       
         static Vector3 NVectorFromRGB(int R, int G, int B)
         {
@@ -72,7 +69,6 @@ namespace Filling_Polygons
             }
             return vector;
         }
-
         static public Color GetColorFromVector(Vector3 vector)
         {
             int R = Math.Max(Math.Min((int)(vector.X * 255), 255), 0);

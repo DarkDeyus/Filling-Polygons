@@ -18,5 +18,6 @@ namespace Filling_Polygons
             Y = y;
         }
         public Point ToPoint() => new Point(X, Y); 
+        
     }
 }

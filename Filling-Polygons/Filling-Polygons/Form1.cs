@@ -25,7 +25,9 @@ namespace Filling_Polygons
         Vector3[,] savedVectors;
         IVector distortion;
         IVector vector;
+        IVector functionMap;
         public IVector light;
+        
         List<Reflector> reflectors;
         Vertex selectedVertex;
         Polygon selectedPolygon;
@@ -35,8 +37,7 @@ namespace Filling_Polygons
         DirectBitmap bitmap;
         Timer timer;
         #endregion
-
-        bool VectorConstant() => radioButtonVectorConstant.Checked;
+      
         bool VectorLightSourceConstant() => radioButtonVectorLightSourceConstant.Checked;
         bool DistortionNone() => radioButtonDistortionNone.Checked;
         bool FirstObjectColor() => radioButtonFirstObjectColor.Checked;
@@ -75,7 +76,7 @@ namespace Filling_Polygons
         void UpdateDistortion(Vector3[,] vectors) => distortion = new VectorArray(vectors);
         void UpdatePolygon(Polygon polygon)
         {
-            polygon.Calculate(lightSourceColor, vector, distortion, light, reflectors, pictureBox1.Right - pictureBox1.Left, pictureBox1.Bottom - pictureBox1.Top);
+            polygon.CalculateColor(lightSourceColor, vector, distortion, light, reflectors, pictureBox1.Right - pictureBox1.Left, pictureBox1.Bottom - pictureBox1.Top);
         }
         void UpdatePolygons()
         {
@@ -106,8 +107,10 @@ namespace Filling_Polygons
             bitmap = new DirectBitmap(width, height);
             light = new ConstantVector(new Vector3(0, 0, 1));
 
+            Function func = new Function(50, 1 / 80f, 1 / 80f);
+            functionMap = func.getNormalMap(width, height);
             timer = new Timer();
-            timer.Interval = 1000;
+            timer.Interval = 30;
             timer.Tick += UpdateLight;
 
             
@@ -121,9 +124,9 @@ namespace Filling_Polygons
 
             reflectors = new List<Reflector>()
             {
-                new Reflector(width / 2, height / 2,  1, 1 , Color.Red),
-                new Reflector(width / 2, height / 2,  1000, 1 , Color.Green),
-                new Reflector(width / 2, height / 2,  540, 920 , Color.Blue)
+                new Reflector(width / 2, height / 2,  1, 1 , Color.Red, width, height),
+                new Reflector(width / 2, height / 2,  1000, 1 , Color.Green, width, height),
+                new Reflector(width / 2, height / 2,  540, 920 , Color.Blue, width, height)
             };
 
             foreach (Polygon polygon in polygons)
@@ -164,7 +167,7 @@ namespace Filling_Polygons
             {
                 vectorTexture = image;
                 savedVectors = Helpers.GetNormalVectorArray(new PixelMapSharp.PixelMap(vectorTexture));
-                if (!VectorConstant()) UpdateVector(savedVectors);
+                if (radioButtonVectorTexture.Checked) UpdateVector(savedVectors);
                 savedDistortion = Helpers.GetDistortionVectorArray(new PixelMapSharp.PixelMap(distortionTexture), vector);
                 if (!DistortionNone()) UpdateDistortion(savedDistortion);
                 pictureBoxVectorTexture.Image = image;
@@ -313,19 +316,32 @@ namespace Filling_Polygons
         }
         private void radioButtonVector_CheckedChanged(object sender, EventArgs e)
         {
-            if(VectorConstant())
+            if(radioButtonVectorConstant.Checked)
             {
                 vector = new ConstantVector(new Vector3(0, 0, 1));
-                
+                savedDistortion = Helpers.GetDistortionVectorArray(new PixelMapSharp.PixelMap(distortionTexture), vector);
+                if (!DistortionNone()) UpdateDistortion(savedDistortion);
+                UpdatePolygons();
+                pictureBox1.Refresh();
+
             }
-            else
+            else if(radioButtonVectorTexture.Checked)
             {
                 UpdateVector(savedVectors);
+                savedDistortion = Helpers.GetDistortionVectorArray(new PixelMapSharp.PixelMap(distortionTexture), vector);
+                if (!DistortionNone()) UpdateDistortion(savedDistortion);
+                UpdatePolygons();
+                pictureBox1.Refresh();
             }
-            savedDistortion = Helpers.GetDistortionVectorArray(new PixelMapSharp.PixelMap(distortionTexture), vector);
-            if (!DistortionNone()) UpdateDistortion(savedDistortion);
-            UpdatePolygons();
-            pictureBox1.Refresh();
+            else if(radioButtonFunctionVector.Checked)
+            {
+                vector = functionMap;
+                savedDistortion = Helpers.GetDistortionVectorArray(new PixelMapSharp.PixelMap(distortionTexture), vector);
+                if (!DistortionNone()) UpdateDistortion(savedDistortion);
+                UpdatePolygons();
+                pictureBox1.Refresh();
+            }
+            
         }
         private void radioButtonDistortion_CheckedChanged(object sender, EventArgs e)
         {

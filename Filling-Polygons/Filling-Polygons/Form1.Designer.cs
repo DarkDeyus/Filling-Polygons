@@ -56,6 +56,7 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.buttonLightSourceColor = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.radioButtonFunctionVector = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -204,6 +205,7 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.radioButtonFunctionVector);
             this.groupBox4.Controls.Add(this.pictureBoxVectorTexture);
             this.groupBox4.Controls.Add(this.radioButtonVectorTexture);
             this.groupBox4.Controls.Add(this.radioButtonVectorConstant);
@@ -235,16 +237,16 @@
             this.radioButtonVectorTexture.TabIndex = 4;
             this.radioButtonVectorTexture.Text = "Texture (NormalMap)";
             this.radioButtonVectorTexture.UseVisualStyleBackColor = true;
+            this.radioButtonVectorTexture.CheckedChanged += new System.EventHandler(this.radioButtonVector_CheckedChanged);
             // 
             // radioButtonVectorConstant
             // 
             this.radioButtonVectorConstant.AutoSize = true;
             this.radioButtonVectorConstant.Checked = true;
-            this.radioButtonVectorConstant.Location = new System.Drawing.Point(7, 30);
+            this.radioButtonVectorConstant.Location = new System.Drawing.Point(6, 19);
             this.radioButtonVectorConstant.Name = "radioButtonVectorConstant";
             this.radioButtonVectorConstant.Size = new System.Drawing.Size(100, 17);
             this.radioButtonVectorConstant.TabIndex = 3;
-            this.radioButtonVectorConstant.TabStop = true;
             this.radioButtonVectorConstant.Text = "Constant [0,0,1]";
             this.radioButtonVectorConstant.UseVisualStyleBackColor = true;
             this.radioButtonVectorConstant.CheckedChanged += new System.EventHandler(this.radioButtonVector_CheckedChanged);
@@ -265,11 +267,16 @@
             // numericUpDown
             // 
             this.numericUpDown.Location = new System.Drawing.Point(93, 75);
+            this.numericUpDown.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
             this.numericUpDown.Name = "numericUpDown";
             this.numericUpDown.Size = new System.Drawing.Size(85, 20);
             this.numericUpDown.TabIndex = 7;
             this.numericUpDown.Value = new decimal(new int[] {
-            30,
+            400,
             0,
             0,
             0});
@@ -399,6 +406,17 @@
             this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove);
             this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseUp);
             // 
+            // radioButtonFunctionVector
+            // 
+            this.radioButtonFunctionVector.AutoSize = true;
+            this.radioButtonFunctionVector.Location = new System.Drawing.Point(6, 43);
+            this.radioButtonFunctionVector.Name = "radioButtonFunctionVector";
+            this.radioButtonFunctionVector.Size = new System.Drawing.Size(66, 17);
+            this.radioButtonFunctionVector.TabIndex = 5;
+            this.radioButtonFunctionVector.Text = "Function";
+            this.radioButtonFunctionVector.UseVisualStyleBackColor = true;
+            this.radioButtonFunctionVector.CheckedChanged += new System.EventHandler(this.radioButtonVector_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -461,6 +479,7 @@
         private System.Windows.Forms.Button buttonSecondObjectColor;
         private System.Windows.Forms.RadioButton radioButton1;
         private System.Windows.Forms.RadioButton radioButtonSecondObjectColor;
+        private System.Windows.Forms.RadioButton radioButtonFunctionVector;
     }
 }
 

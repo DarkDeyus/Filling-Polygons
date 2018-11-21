@@ -12,22 +12,24 @@ namespace Filling_Polygons
 {
     class Polygon
     {
+        #region Variables
         List<Vertex> vertices;
         readonly int vertexSize = 10;
         readonly int leeway = 10;
         public Color Color = Color.Green;
         public PixelMap Texture = new PixelMap(Resources.normalmap);
         IVector texture;
-        IVector objectFilling;
+        IVector objectFilling;     
         Color[,] paint;
         public bool color = true;
+        #endregion
+
         public Polygon(List<Vertex> list) => vertices = list;                   
         public int VerticesCount() => vertices.Count;
         public void Paint(PaintEventArgs e, DirectBitmap bitmap)
         {                      
             Scanline(bitmap);                       
         }
-
         public void PaintVertices(PaintEventArgs e)
         {
             for (int i = 0; i < vertices.Count; i++)
@@ -38,7 +40,7 @@ namespace Filling_Polygons
                 e.Graphics.FillEllipse(Brushes.Black, rect);
             }
         }
-        public void Calculate(Color lightColor, IVector vector, IVector distortion, IVector lightVector, List<Reflector> reflectors, int width, int height )
+        public void CalculateColor(Color lightColor, IVector vector, IVector distortion, IVector lightVector, List<Reflector> reflectors, int width, int height )
         {
             objectFilling = color ? new ConstantVector(Helpers.GetVector(Color)) : texture; 
             Vector3 colorVector = Helpers.GetVector(lightColor);           
@@ -61,11 +63,7 @@ namespace Filling_Polygons
             }
             paint = map;
         }
-
-        public void UpdateColor(Color color)
-        {
-            Color = color;         
-        }
+        public void UpdateColor(Color color) => Color = color;       
         public void UpdateTexture(Bitmap texture)
         {
            Texture = new PixelMap(texture);
